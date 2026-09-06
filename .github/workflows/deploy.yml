@@ -1,0 +1,70 @@
+name: Deploy
+
+# Sem chave de acesso AWS no GitHub: o job assume uma role via OIDC
+# (infra/bootstrap/github-oidc.yaml).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "infra/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publicar a Lambda
+    runs-on: ubuntu-latest
+    environment: producao
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+
+      - name: Bundle da Lambda
+        run: npm run build -w @crawler/api
+        env:
+          APP_VERSION: ${{ github.sha }}
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: sa-east-1
+
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: sam build e deploy
+        working-directory: infra
+        run: |
+          sam build
+          sam deploy \
+            --no-confirm-changeset --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              SischefUsuario="${{ secrets.SISCHEF_USUARIO }}" \
+              SischefSenha="${{ secrets.SISCHEF_SENHA }}" \
+              ApiKeysSha256="${{ secrets.CRAWLER_API_KEYS_SHA256 }}" \
+              ReportsBucket="${{ vars.REPORTS_BUCKET }}" \
+              AppVersion="${{ github.sha }}"
+
+      - name: Smoke test
+        run: |
+          URL=$(aws cloudformation describe-stacks --stack-name crawler-sischef --region sa-east-1 \
+                --query "Stacks[0].Outputs[?OutputKey=='FunctionUrl'].OutputValue" --output text)
+          echo "Endpoint: $URL"
+          curl --fail --silent --show-error "${URL}health"

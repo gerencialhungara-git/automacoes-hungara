@@ -1,0 +1,14 @@
+# A gravação guarda a SENHA digitada (fluxo.js) e um cookie de sessão válido
+# (sessao.json). Nunca vai para o GitHub.
+gravacoes/
+saida/
+
+node_modules/
+dist/
+.aws-sam/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+coverage/

@@ -1,0 +1,24 @@
+{
+  "name": "@crawler/sischef",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "gravar": "node scripts/gravar.mjs",
+    "baixar": "tsx --env-file-if-exists=.env scripts/baixar.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@crawler/shared": "*",
+    "@e965/xlsx": "^0.20.3",
+    "playwright": "1.63.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3",
+    "vitest": "^3.0.0"
+  }
+}

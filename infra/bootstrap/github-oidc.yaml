@@ -1,0 +1,202 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Bootstrap do crawler-sischef (rodar UMA vez com o perfil local `hungara`):
+  role que o GitHub Actions assume, repositorio ECR da imagem, bucket dos
+  relatorios, bucket de artefatos do SAM e um Budget de alerta de custo.
+
+Parameters:
+  GitHubOrg:
+    Type: String
+    Default: gerencialhungara-git
+  GitHubRepo:
+    Type: String
+    Default: crawler-sischef
+  GitHubOrgId:
+    Type: String
+    Default: "272624545"
+    Description: ID numerico da organizacao (o GitHub inclui no token como org@id)
+  AlertEmail:
+    Type: String
+    Default: gerencial.hungara@gmail.com
+  MonthlyBudgetUsd:
+    Type: Number
+    Default: 5
+
+Resources:
+  SamArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub crawler-sischef-sam-artifacts-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: apagar-artefatos-antigos
+            Status: Enabled
+            ExpirationInDays: 30
+
+  # Fica no bootstrap, e nao na stack do SAM, pelo mesmo motivo do bucket de
+  # artefatos: dado nao pode sumir junto com um `sam delete`.
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub crawler-sischef-relatorios-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: relatorios-expiram-em-1-ano
+            Status: Enabled
+            Prefix: relatorios/
+            ExpirationInDays: 365
+
+  ImageRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: crawler-sischef
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      # Sem isso a conta acumula uma imagem de ~1 GB por deploy — a unica linha
+      # do orcamento deste projeto que cresce sozinha.
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {"rules":[
+            {"rulePriority":1,"description":"Apagar imagens sem tag em 1 dia",
+             "selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":1},
+             "action":{"type":"expire"}},
+            {"rulePriority":2,"description":"Guardar so as 3 ultimas",
+             "selection":{"tagStatus":"any","countType":"imageCountMoreThan","countNumber":3},
+             "action":{"type":"expire"}}
+          ]}
+
+  DeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: crawler-sischef-deploy
+      Description: Assumida pelo GitHub Actions (repo crawler-sischef, branch main) para sam deploy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              # O provedor OIDC do GitHub JA EXISTE nesta conta: foi criado pelo
+              # bootstrap do hub-hungara. Criar um segundo falha, entao aqui a
+              # gente so aponta para ele.
+              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub:
+                  - !Sub repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/main
+                  - !Sub repo:${GitHubOrg}/${GitHubRepo}:environment:producao
+                  # O ID numerico do repositorio so existe depois de o repo ser
+                  # criado; `*` evita ter que voltar aqui para preencher.
+                  - !Sub repo:${GitHubOrg}@${GitHubOrgId}/${GitHubRepo}@*:ref:refs/heads/main
+                  - !Sub repo:${GitHubOrg}@${GitHubOrgId}/${GitHubRepo}@*:environment:producao
+      Policies:
+        - PolicyName: sam-deploy-crawler-sischef
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudFormation
+                Effect: Allow
+                Action: cloudformation:*
+                Resource:
+                  - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/crawler-sischef/*
+                  - !Sub arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31
+              - Sid: CloudFormationLeitura
+                Effect: Allow
+                Action: [cloudformation:GetTemplateSummary, cloudformation:ValidateTemplate, cloudformation:ListStacks]
+                Resource: "*"
+              - Sid: ArtefatosSam
+                Effect: Allow
+                Action: [s3:PutObject, s3:GetObject, s3:ListBucket, s3:GetBucketLocation]
+                Resource: [!GetAtt SamArtifactsBucket.Arn, !Sub "${SamArtifactsBucket.Arn}/*"]
+              - Sid: EcrLogin
+                Effect: Allow
+                Action: ecr:GetAuthorizationToken
+                Resource: "*"
+              - Sid: EcrPush
+                Effect: Allow
+                Action:
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:InitiateLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:CompleteLayerUpload
+                  - ecr:PutImage
+                  - ecr:BatchGetImage
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:DescribeImages
+                  - ecr:DescribeRepositories
+                  - ecr:ListImages
+                Resource: !GetAtt ImageRepository.Arn
+              - Sid: RecursosDaStack
+                Effect: Allow
+                Action:
+                  - lambda:*
+                  - logs:*
+                  - cloudwatch:PutMetricAlarm
+                  - cloudwatch:DeleteAlarms
+                  - cloudwatch:DescribeAlarms
+                  - sns:CreateTopic
+                  - sns:DeleteTopic
+                  - sns:GetTopicAttributes
+                  - sns:SetTopicAttributes
+                  - sns:TagResource
+                  - sns:Subscribe
+                Resource: "*"
+              - Sid: RoleDaLambda
+                Effect: Allow
+                Action: [iam:CreateRole, iam:DeleteRole, iam:GetRole, iam:PassRole, iam:AttachRolePolicy,
+                         iam:DetachRolePolicy, iam:PutRolePolicy, iam:DeleteRolePolicy, iam:GetRolePolicy,
+                         iam:TagRole, iam:UntagRole, iam:UpdateAssumeRolePolicy]
+                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/crawler-sischef-*
+
+  CostBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: crawler-sischef
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit:
+          Amount: !Ref MonthlyBudgetUsd
+          Unit: USD
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 80
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref AlertEmail
+
+Outputs:
+  DeployRoleArn:
+    Description: Cole em Settings > Secrets > Actions como AWS_ROLE_ARN
+    Value: !GetAtt DeployRole.Arn
+  ReportsBucketName:
+    Description: Cole em Settings > Variables como REPORTS_BUCKET
+    Value: !Ref ReportsBucket
+  ImageRepositoryUri:
+    Description: Deve bater com image_repositories no infra/samconfig.toml
+    Value: !GetAtt ImageRepository.RepositoryUri
+  SamArtifactsBucketName:
+    Value: !Ref SamArtifactsBucket

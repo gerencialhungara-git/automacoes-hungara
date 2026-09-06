@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: crawler-sischef - Lambda que baixa o relatorio Pedidos de venda do Sischef
+
+Parameters:
+  SischefUsuario:
+    Type: String
+    NoEcho: true
+  SischefSenha:
+    Type: String
+    NoEcho: true
+  ApiKeysSha256:
+    Type: String
+    NoEcho: true
+    Description: SHA-256 (hex) das chaves aceitas, separados por virgula. Nunca a chave em si.
+  ReportsBucket:
+    Type: String
+    Description: Bucket dos relatorios, criado no bootstrap
+  AppVersion:
+    Type: String
+    Default: dev
+
+Resources:
+  CrawlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: crawler-sischef
+      Description: Faz login no Sischef, baixa Pedidos de venda do periodo e devolve JSON + arquivo no S3
+      PackageType: Image
+      # x86_64 de proposito (o Hub e' arm64): os runners do GitHub sao amd64, e
+      # emular arm64 com QEMU deixa o build de imagem em 15+ minutos. Ver ADR-0003.
+      Architectures: [x86_64]
+      # O Chromium quer >= 2 GB; na Lambda a CPU escala junto com a memoria.
+      MemorySize: 2048
+      # O crawl leva ~1 min; 10 min cobre periodo longo e Sischef lento.
+      Timeout: 600
+      EphemeralStorage:
+        # /tmp: profile do Chromium + o arquivo baixado.
+        Size: 1024
+      Environment:
+        Variables:
+          SISCHEF_USUARIO: !Ref SischefUsuario
+          SISCHEF_SENHA: !Ref SischefSenha
+          API_KEYS_SHA256: !Ref ApiKeysSha256
+          REPORTS_BUCKET: !Ref ReportsBucket
+          APP_VERSION: !Ref AppVersion
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref ReportsBucket
+      FunctionUrlConfig:
+        # NONE + chave propria no header x-api-key: o Function URL nao tem o teto
+        # de 30 s do API Gateway, e e' o teto que decidiria a arquitetura toda.
+        # A conferencia da chave e' a primeira linha do handler. Ver ADR-0002.
+        AuthType: NONE
+        InvokeMode: BUFFERED
+      LoggingConfig:
+        LogGroup: !Ref CrawlerLogGroup
+    Metadata:
+      DockerContext: ../
+      Dockerfile: apps/api/Dockerfile
+      DockerTag: !Ref AppVersion
+
+  CrawlerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/crawler-sischef
+      RetentionInDays: 14
+
+  ErrosAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: crawler-sischef-errors
+      AlarmDescription: O crawler do Sischef falhou - normalmente e' seletor quebrado ou login recusado
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref CrawlerFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!Ref AlertasTopic]
+
+  AlertasTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: crawler-sischef-alertas
+
+Outputs:
+  FunctionUrl:
+    Description: Endpoint do crawler (POST com header x-api-key)
+    Value: !GetAtt CrawlerFunctionUrl.FunctionUrl
+  AlertasTopicArn:
+    Description: Inscreva um e-mail neste topico para receber os alarmes
+    Value: !Ref AlertasTopic

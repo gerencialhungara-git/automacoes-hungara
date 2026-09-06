@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    // "DOM" porque `page.evaluate` roda dentro do navegador: o código dentro do
+    // callback é browser, não Node.
+    "lib": ["ES2022", "DOM"]
+  },
+  "include": ["src", "scripts", "test"]
+}

@@ -1,0 +1,13 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "crawler-sischef"
+region = "sa-east-1"
+
+[default.deploy.parameters]
+s3_bucket = "crawler-sischef-sam-artifacts-622703417827"
+s3_prefix = "crawler-sischef"
+image_repositories = ["CrawlerFunction=622703417827.dkr.ecr.sa-east-1.amazonaws.com/crawler-sischef"]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+fail_on_empty_changeset = false
