@@ -1,0 +1,667 @@
+{
+  "_doc": "Gerado por scripts/atualizar-cadastro.mjs a partir do export do Yungas. Não editar à mão. Guarda todas as linhas; quem filtra é src/cadastro.ts.",
+  "_origem": "Franquias-Yungas.xlsx",
+  "_geradoEm": "2026-09-07",
+  "franquias": [
+    {
+      "nome": "H SHOPPING BR",
+      "idPdvLoja": "14084409",
+      "apelido": "SH BR"
+    },
+    {
+      "nome": "NOBREDO ALIMENTOS - FRIGOCENTER",
+      "idPdvLoja": "10295244",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] H METRO CIDADE NOVA",
+      "idPdvLoja": "8602949",
+      "apelido": "M CID N"
+    },
+    {
+      "nome": "z[INATIVA] SUP RF GONÇALVES TRINDADE",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "H TERMINAL DEODORO",
+      "idPdvLoja": "13698736",
+      "apelido": "DEOD"
+    },
+    {
+      "nome": "H OLEGARIO",
+      "idPdvLoja": "12708973",
+      "apelido": "OLEG"
+    },
+    {
+      "nome": "z[INATIVA] H STILO ALCANTARA",
+      "idPdvLoja": "8748894",
+      "apelido": "STILO"
+    },
+    {
+      "nome": "FÁBRICA MATRIZ",
+      "idPdvLoja": "",
+      "apelido": "FABRICA"
+    },
+    {
+      "nome": "H ITAIPUAÇU 70 JARDIM ATLANTICO",
+      "idPdvLoja": "7574526",
+      "apelido": "R 70"
+    },
+    {
+      "nome": "Franquia Teste 2",
+      "idPdvLoja": "0",
+      "apelido": ""
+    },
+    {
+      "nome": "H INOÃ",
+      "idPdvLoja": "10464112",
+      "apelido": "INOA"
+    },
+    {
+      "nome": "H TERMINAL ALVORADA",
+      "idPdvLoja": "10306846",
+      "apelido": "T ALVOR"
+    },
+    {
+      "nome": "z[INATIVA] H COPACABANA",
+      "idPdvLoja": "6159786",
+      "apelido": "COPA"
+    },
+    {
+      "nome": "H METRO URUGUAIANA",
+      "idPdvLoja": "7239913",
+      "apelido": "URUGUAI"
+    },
+    {
+      "nome": "z[INATIVA] H BUZIOS",
+      "idPdvLoja": "7284420",
+      "apelido": "BZ"
+    },
+    {
+      "nome": "z[INATIVA] H CASIMIRO DE ABREU",
+      "idPdvLoja": "8760060",
+      "apelido": "CASIMIRO"
+    },
+    {
+      "nome": "z[INATIVA] H LARGO DO MACHADO",
+      "idPdvLoja": "7397030",
+      "apelido": "L MACHADO"
+    },
+    {
+      "nome": "z[INATIVA] H PLAZA SHOPPING",
+      "idPdvLoja": "6647152",
+      "apelido": "PLAZA S"
+    },
+    {
+      "nome": "H METRO CARIOCA",
+      "idPdvLoja": "7626870",
+      "apelido": "M CARIOCA"
+    },
+    {
+      "nome": "z[INATIVA] H MARIA PAULA",
+      "idPdvLoja": "9951452",
+      "apelido": "M PAULA"
+    },
+    {
+      "nome": "H CALÇADÃO ALCANTARA",
+      "idPdvLoja": "8748755",
+      "apelido": "C ALCANTAR"
+    },
+    {
+      "nome": "H CANTAREIRA",
+      "idPdvLoja": "7823505",
+      "apelido": "CANTAREIR"
+    },
+    {
+      "nome": "H NEVES",
+      "idPdvLoja": "12128562",
+      "apelido": "NEV"
+    },
+    {
+      "nome": "z[INATIVA] H SHOPPING SÃO GONÇALO",
+      "idPdvLoja": "6634824",
+      "apelido": "BR"
+    },
+    {
+      "nome": "H TIJUCA",
+      "idPdvLoja": "10759073",
+      "apelido": "TIJU"
+    },
+    {
+      "nome": "H SÃO GONÇALO RODO",
+      "idPdvLoja": "7478382",
+      "apelido": "SG RODO"
+    },
+    {
+      "nome": "H BAY MARKET",
+      "idPdvLoja": "4824209",
+      "apelido": "BAY"
+    },
+    {
+      "nome": "H BARRETO",
+      "idPdvLoja": "6828643",
+      "apelido": "BARRETO"
+    },
+    {
+      "nome": "H FONSECA",
+      "idPdvLoja": "8345038",
+      "apelido": "FONSECA"
+    },
+    {
+      "nome": "H AVENIDA CENTRAL",
+      "idPdvLoja": "6836238",
+      "apelido": "AV CENTRAL"
+    },
+    {
+      "nome": "H INGÁ",
+      "idPdvLoja": "9605730",
+      "apelido": "INGA"
+    },
+    {
+      "nome": "H MARIA PAULA",
+      "idPdvLoja": "13116893",
+      "apelido": "M PAUL"
+    },
+    {
+      "nome": "z[INATIVA] SUP REUNIDOS MARAVISTA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP PORTILHO E GONCALVES TRINDADE",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL DE SÃO FRANCISCO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL ICARAI",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL ITAIPU",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL MARIA PAULA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL PENDOTIBA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REDE DUX",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP DISTRIBUIDORA S J ROCHA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "H ITAIPUAÇU BARROCO",
+      "idPdvLoja": "5187611",
+      "apelido": "BARROCO"
+    },
+    {
+      "nome": "H PARTAGE",
+      "idPdvLoja": "10816376",
+      "apelido": "PARTAGE"
+    },
+    {
+      "nome": "H VILA DA PENHA",
+      "idPdvLoja": "8749520",
+      "apelido": "V PENHA"
+    },
+    {
+      "nome": "H ITABORAI - SHOPPING",
+      "idPdvLoja": "8748857",
+      "apelido": "ITAB SHOP"
+    },
+    {
+      "nome": "z[INATIVA] SUP SÃO JUDAS TADEUS BACAXA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL MARAVISTA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL PIRATININGA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REAL SANTA ROSA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA ALTO CAJUEIROS",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA ARARUAMA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA BOTAFOGO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA MANGUEIRINHA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA PORTINHO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA SÃO FRANCISCO XAVIER",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP DESCONTAO ITABORAI",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA CHÁCARAS DE INOÃ",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA CIDADE PRAIANA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA COPACABANA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA CORDEIRINHO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA GLORIA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA IGUABA GRANDE",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA MARIA JOAQUINA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA SAO CRISTOVAO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP ALVORADA TAMOIOS",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "H PARAISO",
+      "idPdvLoja": "7021229",
+      "apelido": "PARAISO"
+    },
+    {
+      "nome": "H MOREIRA CÉSAR",
+      "idPdvLoja": "4253799",
+      "apelido": "MC"
+    },
+    {
+      "nome": "z[INATIVA] SUP C A VIEIRA BOACU",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP DISTRIBUIDORA S J MUTUAGUAÇU",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP GA PIABETA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REUNIDOS JARDIM CAMPOMAR",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REUNIDOS MARAMBAIA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] H CABO FRIO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] H ARARUAMA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] H METRO NOSSA SENHORA DA PAZ",
+      "idPdvLoja": "8607938",
+      "apelido": "NS PAZ"
+    },
+    {
+      "nome": "z[INATIVA] H RIO DAS OSTRAS",
+      "idPdvLoja": "6856571",
+      "apelido": "R OSTRAS"
+    },
+    {
+      "nome": "z[INATIVA] H ROCINHA",
+      "idPdvLoja": "7359750",
+      "apelido": "ROCINHA"
+    },
+    {
+      "nome": "z[INATIVA] H SÃO CRISTOVÃO",
+      "idPdvLoja": "9605496",
+      "apelido": "S CRIST"
+    },
+    {
+      "nome": "z[INATIVA] H ITACOATIARA",
+      "idPdvLoja": "10306872",
+      "apelido": "ITACOA"
+    },
+    {
+      "nome": "H SÃO FRANCISCO",
+      "idPdvLoja": "12935426",
+      "apelido": "SF"
+    },
+    {
+      "nome": "H SÃO GONÇALO CENTRO",
+      "idPdvLoja": "6052315",
+      "apelido": "SG CENTRO"
+    },
+    {
+      "nome": "z[INATIVA] H SP - GUARULHOS - GRU",
+      "idPdvLoja": "9776248",
+      "apelido": "GRU"
+    },
+    {
+      "nome": "z[INATIVA] H TANGUA - ROTA DO SOL",
+      "idPdvLoja": "10306862",
+      "apelido": "TANG"
+    },
+    {
+      "nome": "z[INATIVA] H SANTA CATARINA",
+      "idPdvLoja": "10097474",
+      "apelido": "S CAT"
+    },
+    {
+      "nome": "z[INATIVA] H SP - R.CUBATÃO",
+      "idPdvLoja": "8838344",
+      "apelido": "R CUBAT"
+    },
+    {
+      "nome": "z[INATIVA] H METRO CANTAGALO",
+      "idPdvLoja": "8122560",
+      "apelido": "M CANTAG"
+    },
+    {
+      "nome": "z[INATIVA] SUP AUTO MARKET",
+      "idPdvLoja": "13827181",
+      "apelido": ""
+    },
+    {
+      "nome": "H R. CONCEICAO",
+      "idPdvLoja": "14012389",
+      "apelido": "R CONCEIC"
+    },
+    {
+      "nome": "z[INATIVA] H RIO BONITO",
+      "idPdvLoja": "8748891",
+      "apelido": "R BONITO"
+    },
+    {
+      "nome": "H TRINDADE",
+      "idPdvLoja": "9407946",
+      "apelido": "TRIND"
+    },
+    {
+      "nome": "H COLUBANDE",
+      "idPdvLoja": "8118309",
+      "apelido": "COLUB"
+    },
+    {
+      "nome": "H ITABORAI - RUA",
+      "idPdvLoja": "9408985",
+      "apelido": "ITABORAI"
+    },
+    {
+      "nome": "H LARGO da BATALHA",
+      "idPdvLoja": "9951467",
+      "apelido": "L BATALHA"
+    },
+    {
+      "nome": "H MAGÉ",
+      "idPdvLoja": "12478951",
+      "apelido": "MAGE"
+    },
+    {
+      "nome": "H MANILHA",
+      "idPdvLoja": "9906162",
+      "apelido": "MANILHA"
+    },
+    {
+      "nome": "H METRO JARDIM OCEANICO",
+      "idPdvLoja": "7917057",
+      "apelido": "BARRA"
+    },
+    {
+      "nome": "H PATIO ALCANTARA",
+      "idPdvLoja": "7155979",
+      "apelido": "PATIO ALC"
+    },
+    {
+      "nome": "H RIO 2",
+      "idPdvLoja": "10759068",
+      "apelido": "RIO 2"
+    },
+    {
+      "nome": "H SANTA ROSA",
+      "idPdvLoja": "6189597",
+      "apelido": "S ROSA"
+    },
+    {
+      "nome": "H TAVARES MACEDO",
+      "idPdvLoja": "7067443",
+      "apelido": "TAVARES"
+    },
+    {
+      "nome": "Unidade Teste",
+      "idPdvLoja": "10798048",
+      "apelido": "TESTE"
+    },
+    {
+      "nome": "z[INATIVA] H METRO ANTERO QUENTAL",
+      "idPdvLoja": "8464435",
+      "apelido": "M ANTERO"
+    },
+    {
+      "nome": "z[INATIVA] H METRO CENTRAL DO BRASIL",
+      "idPdvLoja": "8748841",
+      "apelido": "M CENTR B"
+    },
+    {
+      "nome": "z[INATIVA] SUP ATACADAO OLALLA ZE GAROTO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP LATICINIOS BOA ESPERANÇA ARARUAMA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP LATICINIOS BOA ESPERANÇA PARATY",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP BOMFRIOS CENTRO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP BOMFRIOS MANILHA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP F R GONCALVES ATACADISTA VILA BRASIL",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP GUIMARAES E CIA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP MERCEARIA ECONOMAIS PAPUCAIA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP MERCEARIA ECONOMAIS PARQUE SANTA LUZIA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP BORA MARKET BELA VISTA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP DISTRIBUIDORA S J JARDIM PLANALTO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP DISTRIBUIDORA S J PORTO DA PEDRA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP MIRANDA MENDONCA SILVA JARDIM",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP RAMIGOS ANCHIETA",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP RAMIGOS BANGU",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP RAMIGOS COSMOS",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP REUNIDOS ITABORAI",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP TINOCO MENDONCA RIO BONITO",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] H CAMPO GRANDE",
+      "idPdvLoja": "8748823",
+      "apelido": "C GRANDE"
+    },
+    {
+      "nome": "H BR CAMBOINHAS",
+      "idPdvLoja": "13054540",
+      "apelido": "CAMB"
+    },
+    {
+      "nome": "H MARICA",
+      "idPdvLoja": "7431917",
+      "apelido": "MARICA"
+    },
+    {
+      "nome": "z[INATIVA] H SP - AV PAULISTA",
+      "idPdvLoja": "8511477",
+      "apelido": "PAULISTA"
+    },
+    {
+      "nome": "H MENEZES CORTES",
+      "idPdvLoja": "7086620",
+      "apelido": "MENEZES"
+    },
+    {
+      "nome": "z[INATIVA] H SÃO FRANCISCO",
+      "idPdvLoja": "6057635",
+      "apelido": "S FRANCISC"
+    },
+    {
+      "nome": "H TERMINAL GENTILEZA",
+      "idPdvLoja": "10696601",
+      "apelido": "T GENTIL"
+    },
+    {
+      "nome": "H PIAZZA",
+      "idPdvLoja": "6011534",
+      "apelido": "ITAIPU"
+    },
+    {
+      "nome": "z[INATIVA] SUP GONÇALVES E PORTILHO SÃO JOSE DO IMBASSAI",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP PIO BORGES EIRELI",
+      "idPdvLoja": "",
+      "apelido": ""
+    },
+    {
+      "nome": "z[INATIVA] SUP BORA MARKET NANCILANDIA",
+      "idPdvLoja": "",
+      "apelido": ""
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "_doc": "Config da rotina de logística/produção. Layout-alvo: planilha 'Programação de produção' (modelo Valnei). A LISTA DE PRODUTOS É FIXA e sempre aparece inteira (mesmo sem pedido), na ordem do modelo. O match dos pedidos é por SKU (ID Produto), não por texto: cada linha declara os 'ids' do cadastro Produtos.xlsx que somam nela. 'rotulo' = nome curto de fábrica (exibido). 'erp' = descrição de referência (não usada no cálculo).",
+
+  "_doc_ids": "Cada entrada de 'ids' é um SKU (int) OU um par [SKU, fator] quando a quantidade do ERP precisa ser convertida para a unidade da linha. Ex.: 'Chocolate kt' declara [3098859, [3662971, 6]] = o kit soma 1:1 e a meia caixa (SKU 3662971) soma 6, porque meia cx de doce (18 un) = 6 kits de 3 un. O fator entra no valor da célula, nos subtotais e no TOTAL GERAL.",
+
+  "grupos_excluidos": ["DESCARTÁVEIS"],
+
+  "_doc_ids_excluidos": "SKUs descartados na entrada: não aparecem na lista fixa, não caem em 'Outros' e não somam no TOTAL GERAL. Use para produto que saiu do catálogo da planilha mas que o ERP ainda aceita pedido. Hoje: 3689061 = CX. ITALIANO INTEGRAL PEITO DE PERU CREAM CHEESE, 3689058 = KIT ... PEITO DE PERU ... - 12 UNID (retirados da planilha em 26/08/2026, validado com a operação).",
+  "ids_excluidos": [3689061, 3689058],
+
+  "ordem_lojas": [
+    { "apelido": "BAY",        "nome_curto": "Bay" },
+    { "apelido": "SF",         "nome_curto": "SF" },
+    { "apelido": "ITAIPU",     "nome_curto": "Itaipu" },
+    { "apelido": "INOA",       "nome_curto": "Inoã" },
+    { "apelido": "BARROCO",    "nome_curto": "Barroco" },
+    { "apelido": "R 70",       "nome_curto": "Rua 70" },
+    { "apelido": "AV CENTRAL", "nome_curto": "Av Central" },
+    { "apelido": "BARRETO",    "nome_curto": "Barreto" },
+    { "apelido": "MARICA",     "nome_curto": "Maricá" },
+    { "apelido": "C ALCANTAR", "nome_curto": "Alcântara" },
+    { "apelido": "PARTAGE",    "nome_curto": "Partage" },
+    { "apelido": "RIO 2",      "nome_curto": "Rio 2" },
+    { "apelido": "NEV",        "nome_curto": "Neves" },
+    { "apelido": "M PAUL",     "nome_curto": "M Paula" },
+    { "apelido": "TRIND",      "nome_curto": "Trindade" },
+    { "apelido": "SG CENTRO",  "nome_curto": "SG" }
+  ],
+
+  "coluna_rotulo": "rotulo",
+
+  "colunas_extras": ["Estoque", "Á produzir", "Contagem"],
+
+  "blocos": [
+    {
+      "nome_bloco": "Italianos",
+      "subtotal_label": "Total Cx Italiano",
+      "produtos": [
+        { "rotulo": "Comum",                 "ids": [3098612], "erp": "CX. ITALIANO QUEIJO PRESUNTO" },
+        { "rotulo": "Comum c/Catupiry",      "ids": [3818655], "erp": "CX. ITALIANO QUEIJO PRESUNTO CATUPIRY" },
+        { "rotulo": "Cebola",                "ids": [3098610], "erp": "CX. ITALIANO QUEIJO PRESUNTO CEBOLA" },
+        { "rotulo": "Napolitano",            "ids": [3098607], "erp": "CX. ITALIANO NAPOLITANO" },
+        { "rotulo": "Napolitano c/",         "ids": [3098600], "erp": "CX. ITALIANO NAPOLITANO CEBOLA" },
+        { "rotulo": "Calabresa",             "ids": [3098725], "erp": "CX. ITALIANO CALABRESA" },
+        { "rotulo": "Calabresa c/",          "ids": [3098728], "erp": "CX. ITALIANO CALABRESA CEBOLA" },
+        { "rotulo": "Frango",                "ids": [3098738], "erp": "CX. ITALIANO FRANGO CREAM CHEESE" },
+        { "rotulo": "Frango c/Catupiry",     "ids": [3818657], "erp": "CX. ITALIANO FRANGO COM CATUPIRY" },
+        { "rotulo": "Frango Integral",       "ids": [3362362], "erp": "CX. ITALIANO INTEGRAL FRANGO CREAM CHEESE" },
+        { "rotulo": "Frango Integral c/12",  "ids": [3639824], "erp": "KIT ITALIANO INTEGRAL FRANGO CREAM CHEESE - 12 UNID" },
+        { "rotulo": "4 Queijos",             "ids": [3098721], "erp": "CX. ITALIANO 4 QUEIJOS" },
+        { "rotulo": "Hungaro",               "ids": [3098741], "erp": "CX. ITALIANO HUNGARO" },
+        { "rotulo": "Costela",               "ids": [3098852], "erp": "CX. ITALIANO COSTELA C/ CREAM CHEESE" },
+        { "rotulo": "Costela c/Catupiry",    "ids": [3818659], "erp": "CX. ITALIANO COSTELA C/ CATUPIRY" },
+        { "rotulo": "Carne Seca",            "ids": [3098846], "erp": "CX. ITALIANO CARNE SECA" },
+        { "rotulo": "Carne Seca c/Catupiry", "ids": [3818664], "erp": "CX. ITALIANO CARNE SECA C/ CATUPIRY" },
+        { "rotulo": "X Bacon",               "ids": [3168429], "erp": "CX. ITALIANO X-BACON" },
+        { "rotulo": "X Bacon c/18",          "ids": [3639825], "erp": "MEIA CX. ITALIANO X-BACON" },
+        { "rotulo": "Hot Dog",               "ids": [3540111], "erp": "CX. ITALIANO HOT DOG" },
+        { "rotulo": "Hot Dog c/18",          "ids": [3639821], "erp": "MEIA CX. ITALIANO HOT DOG" },
+        { "rotulo": "Chocolate c/Cenoura",   "ids": [3365660, [3662974, 6]], "erp": "KIT ITALIANO CENOURA COM CHOCOLATE (+ meia cx = 6 kits)" },
+        { "rotulo": "Chocolate kt",          "ids": [3098859, [3662971, 6]], "erp": "KIT ITALIANO CHOCOLATE (+ meia cx = 6 kits)" },
+        { "rotulo": "DiBrownie kt",          "ids": [3100235, [3662969, 6]], "erp": "KIT ITALIANO DIBROWNIE (+ meia cx = 6 kits)" },
+        { "rotulo": "Meio a Meio kt",        "ids": [3098862, [3662973, 6]], "erp": "KIT ITALIANO MEIO A MEIO (+ meia cx = 6 kits)" },
+        { "rotulo": "Sensação kt",           "ids": [3098866, [3662972, 6]], "erp": "KIT ITALIANO SENSAÇÃO (+ meia cx = 6 kits)" },
+        { "rotulo": "Kit Esfiha kt",         "ids": [2120229, 3188349, 3646666], "erp": "KIT ESFIHA - 7 UN (branco + preto + massa, consolidado)" },
+        { "rotulo": "Maionese bg",           "ids": [2853340], "erp": "CX. DE MAIONESE - 4 BAGS" }
+      ]
+    },
+    {
+      "nome_bloco": "Pizzanos",
+      "subtotal_label": "Total Cx Pizzanos",
+      "produtos": [
+        { "rotulo": "Pizzano Napolitano",     "ids": [3003656], "erp": "CX PIZZANO NAPOLITANO - 15 UNID" },
+        { "rotulo": "Pizzano Calabresa",      "ids": [3003647], "erp": "CX PIZZANO CALABRESA - 15 UNID" },
+        { "rotulo": "Pizzano Frango/Bacon",   "ids": [3003654], "erp": "CX PIZZANO FRANGO COM BACON - 15 UNID" },
+        { "rotulo": "Pizzano Costela",        "ids": [3003653], "erp": "CX PIZZANO COSTELA - 15 UNID" },
+        { "rotulo": "Pizzano Mixta Classico", "ids": [3083631], "erp": "CX PIZZANO CLÁSSICO 2 SABORES (CALABRESA + NAPOLITANO) - 16 UNID" },
+        { "rotulo": "Pizzano Mixta Gourmet",  "ids": [3590708], "erp": "CX PIZZANO GOURMET 2 SABORES (FRANGO + COSTELA) - 16 UNID" }
+      ]
+    },
+    {
+      "nome_bloco": "Junior",
+      "subtotal_label": "Total Junior",
+      "produtos": [
+        { "rotulo": "Jr Chocolate",            "ids": [3373180], "erp": "KIT ITALIANO JUNIOR CHOCOLATE" },
+        { "rotulo": "Cx Mini Comum",           "ids": [2845263], "erp": "CX MINI ITALIANO QUEIJO PRESUNTO - 200 UN" },
+        { "rotulo": "Cx Mini 4 Queijos",       "ids": [2845260], "erp": "CX MINI ITALIANO 4 QUEIJOS - 200 UN" },
+        { "rotulo": "Pão de Queijo",           "ids": [3689019], "erp": "KIT PÃO DE QUEIJO - 10 UN" },
+        { "rotulo": "Jr Costela Cong. c/48",   "ids": [3264312], "erp": "MCX. CONGELADOS JUNIOR COSTELA C/ CREAM CHEESE - 12 UN" },
+        { "rotulo": "Jr Calabresa Cong. c/48", "ids": [3264433], "erp": "MCX. CONGELADOS JUNIOR CALABRESA - 12 UN" },
+        { "rotulo": "Jr 4 Queijos Cong. c/48", "ids": [3264428], "erp": "MCX. CONGELADOS JUNIOR 4 QUEIJOS - 12 UN" },
+        { "rotulo": "Jr Frango Cong. c/48",    "ids": [3264419], "erp": "MCX. CONGELADOS JUNIOR FRANGO C/ CREAM CHEESE - 12 UN" }
+      ]
+    }
+  ],
+
+  "_anotacoes": [
+    "LISTA FIXA: todos os produtos dos blocos aparecem sempre, mesmo com quantidade zero (a planilha também é ordem de produção do dia seguinte).",
+    "MATCH POR SKU: cada linha soma os 'ids' declarados. 'Kit Esfiha kt' soma 3 SKUs (branco/preto/massa). 'Jr ... Cong. c/48' usa o SKU 'MCX ... 12 UN' (não há SKU '48' no cadastro; ajustar aqui se a fábrica criar um).",
+    "FATOR: ver '_doc_ids'. As 5 linhas de doce 'kt' consolidam a meia caixa com fator 6. As meias caixas SALGADAS seguem como linha própria sem fator ('X Bacon c/18' SKU 3639825, 'Hot Dog c/18' SKU 3639821) — decisão de 26/08/2026, revisar com a operação se quiserem o mesmo tratamento.",
+    "CATUPIRY: cada sabor com catupiry é uma linha própria imediatamente abaixo do sabor base (Comum, Frango, Costela, Carne Seca). São caixas cheias de 36 un, iguais às do base. A nomenclatura do ERP é inconsistente ('QUEIJO PRESUNTO CATUPIRY' sem COM, 'FRANGO COM CATUPIRY', 'COSTELA C/ CATUPIRY'), então o mapeamento é por SKU — não tentar derivar por texto.",
+    "OUTROS: SKUs pedidos (não-composição, fora dos grupos e dos ids excluídos) que NÃO estão em nenhum bloco caem no bloco 'Outros' no fim, rotulados pela descrição do ERP.",
+    "COLUNAS: uma coluna POR LOJA (desde 26/08/2026 os múltiplos pedidos da mesma loja são consolidados numa coluna só; antes era uma coluna por pedido, com sufixo '(n)') + TOTAL (fórmula) + Estoque + Á produzir + Contagem (vazias, preenchimento manual por ora).",
+    "RETIRADA: pedidos cuja 'Observação do pedido' menciona 'retirada' (qualquer grafia, sem acento/caixa) são descartados inteiros — a loja retira na fábrica, não entra no picking da expedição. É filtro por texto livre porque o export não tem campo de tipo de pedido; o script informa no fim quais pedidos caíram.",
+    "SUBTOTAIS: um por bloco (Total Cx Italiano, Total Cx Pizzanos, Total Junior, Total Outros) + TOTAL GERAL no fim.",
+    "Para exibir a descrição do ERP em vez do nome curto, trocar 'coluna_rotulo' para 'erp'.",
+    "Mapeamentos a confirmar com a operação: 'Alcântara'=C ALCANTAR; 'SG'=SG CENTRO; 'M Paula'=M PAUL."
+  ]
+}

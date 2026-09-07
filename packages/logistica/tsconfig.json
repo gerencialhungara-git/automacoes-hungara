@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    // "DOM" só porque os testes importam @automacoes/sischef, cujo código de
+    // navegador (page.evaluate) precisa desses tipos. A Logística não usa nada de DOM.
+    "lib": ["ES2022", "DOM"],
+    "resolveJsonModule": true
+  },
+  "include": ["src", "test"]
+}

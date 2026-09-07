@@ -1,7 +1,8 @@
 import { read, utils } from "@e965/xlsx";
+import type { Linha } from "@automacoes/shared";
 import { brParaIso, brParaNumero } from "../datas.js";
 
-export type Linha = Record<string, string | number | null>;
+export type { Linha };
 
 /**
  * Colunas do "Pedidos de venda" que não são texto.

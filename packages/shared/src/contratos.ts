@@ -47,3 +47,13 @@ export const RespostaRelatorio = z.object({
 });
 
 export type RespostaRelatorio = z.infer<typeof RespostaRelatorio>;
+
+/**
+ * Uma linha do relatório "Pedidos de venda" já parseada: número é número, data é ISO,
+ * vazio é null. As chaves são os nomes originais das 26 colunas do Sischef (ver
+ * ADR-0004) — quem consome espera `ID Pedido`, `Qtde`, `COMPOSICAO` e companhia.
+ *
+ * Vive aqui, e não no pacote do crawler, porque é contrato entre rotinas: a Logística
+ * consome isto sem precisar saber que existe um navegador do outro lado.
+ */
+export type Linha = Record<string, string | number | null>;
