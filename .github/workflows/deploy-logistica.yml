@@ -1,0 +1,69 @@
+name: Deploy da Logistica
+
+# Rotina zip: o deploy leva segundos e nao toca na imagem do Chromium.
+# Sem chave de acesso AWS: o job assume uma role via OIDC.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/logistica/**"
+      - "packages/logistica/**"
+      - "packages/shared/**"
+      - "infra/logistica/**"
+      - ".github/workflows/deploy-logistica.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-logistica
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publicar a Lambda da Logistica
+    runs-on: ubuntu-latest
+    environment: producao
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm test
+
+      - name: Bundle da Lambda
+        run: npm run build -w @automacoes/logistica-lambda
+        env:
+          APP_VERSION: ${{ github.sha }}
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: sa-east-1
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: sam deploy
+        working-directory: infra/logistica
+        run: |
+          sam deploy \
+            --no-confirm-changeset --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              CrawlerUrl="${{ vars.CRAWLER_URL }}" \
+              CrawlerApiKey="${{ secrets.CRAWLER_API_KEY }}" \
+              ApiKeysSha256="${{ secrets.LOGISTICA_API_KEYS_SHA256 }}" \
+              DadosBucket="${{ vars.REPORTS_BUCKET }}" \
+              AppVersion="${{ github.sha }}"
+
+      - name: Smoke test
+        run: |
+          URL=$(aws cloudformation describe-stacks --stack-name automacoes-hungara-logistica --region sa-east-1 \
+                --query "Stacks[0].Outputs[?OutputKey=='FunctionUrl'].OutputValue" --output text)
+          echo "Endpoint: $URL"
+          curl --fail --silent --show-error "${URL}health"

@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: automacoes-hungara - Lambda da Logistica Diaria (Programacao de Producao)
+
+Parameters:
+  CrawlerUrl:
+    Type: String
+    Description: Function URL do crawler, com barra no fim
+  CrawlerApiKey:
+    Type: String
+    NoEcho: true
+    Description: Chave do crawler em texto - esta Lambda e cliente dele
+  ApiKeysSha256:
+    Type: String
+    NoEcho: true
+    Description: SHA-256 (hex) das chaves que ESTA Lambda aceita, separados por virgula
+  DadosBucket:
+    Type: String
+    Description: Bucket de dados, criado no bootstrap
+  AppVersion:
+    Type: String
+    Default: dev
+
+Resources:
+  LogisticaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: automacoes-hungara-logistica
+      Description: Transforma o relatorio Pedidos de venda na Programacao de Producao
+      # Zip e arm64, ao contrario do crawler: aqui nao tem navegador, e o deploy
+      # leva segundos em vez de reconstruir uma imagem de 3,7 GB.
+      Runtime: nodejs22.x
+      Architectures: [arm64]
+      CodeUri: ../../apps/logistica/dist/
+      Handler: index.handler
+      # O calculo leva menos de 1 s; o tempo todo e' esperar o crawler, que leva
+      # ~45 s frio. 300 s da folga para periodo longo e Sischef lento.
+      MemorySize: 1024
+      Timeout: 300
+      Environment:
+        Variables:
+          NODE_ENV: production
+          CRAWLER_URL: !Ref CrawlerUrl
+          CRAWLER_API_KEY: !Ref CrawlerApiKey
+          API_KEYS_SHA256: !Ref ApiKeysSha256
+          DADOS_BUCKET: !Ref DadosBucket
+          APP_VERSION: !Ref AppVersion
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref DadosBucket
+        # Invocar a si mesma e' o que tira o trabalho pesado de dentro da requisicao
+        # HTTP. O nome vai literal, e nao !Ref, para nao criar dependencia circular
+        # entre a funcao e a propria politica dela.
+        - Statement:
+            - Sid: InvocarSiMesma
+              Effect: Allow
+              Action: lambda:InvokeFunction
+              Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:automacoes-hungara-logistica
+      FunctionUrlConfig:
+        # NONE + chave propria em x-api-key, igual ao crawler: o Function URL nao tem
+        # o teto de 30 s do API Gateway. Ver ADR-0002.
+        AuthType: NONE
+        InvokeMode: BUFFERED
+      LoggingConfig:
+        LogGroup: !Ref LogisticaLogGroup
+
+  LogisticaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/automacoes-hungara-logistica
+      RetentionInDays: 14
+
+  ErrosAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: automacoes-hungara-logistica-errors
+      AlarmDescription: A rotina da Logistica falhou - veja a etapa no log do job
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref LogisticaFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      # O topico vive no bootstrap: um so para todas as rotinas.
+      AlarmActions: [!ImportValue automacoes-hungara-alertas-arn]
+
+Outputs:
+  FunctionUrl:
+    Description: Endpoint da Logistica (POST com header x-api-key)
+    Value: !GetAtt LogisticaFunctionUrl.FunctionUrl

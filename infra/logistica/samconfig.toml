@@ -1,0 +1,12 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "automacoes-hungara-logistica"
+region = "sa-east-1"
+
+[default.deploy.parameters]
+s3_bucket = "automacoes-hungara-artefatos-622703417827"
+s3_prefix = "logistica"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+fail_on_empty_changeset = false
