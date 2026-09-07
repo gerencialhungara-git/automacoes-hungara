@@ -30,10 +30,27 @@ ROLE_ARN=$(saida DeployRoleArn)
 BUCKET=$(saida ReportsBucketName)
 ECR=$(saida ImageRepositoryUri)
 
-# A chave de API é gerada aqui e NUNCA é guardada na AWS: o que vai para a
-# Lambda é só o SHA-256. Guarde a chave em si no gerenciador de senhas.
-CHAVE=$(openssl rand -base64 48 | tr -d '\n=' | tr '+/' '-_')
-HASH=$(printf '%s' "$CHAVE" | shasum -a 256 | cut -d' ' -f1)
+# A chave de API só é gerada quando pedida (`--nova-chave`). Este script é
+# idempotente e vai ser rodado de novo a cada mudança no bootstrap; gerar chave
+# a cada vez faria parecer que a chave anterior deixou de valer.
+if [[ "${1:-}" == "--nova-chave" ]]; then
+  CHAVE=$(openssl rand -base64 48 | tr -d '\n=' | tr '+/' '-_')
+  HASH=$(printf '%s' "$CHAVE" | shasum -a 256 | cut -d' ' -f1)
+  cat <<CHAVEFIM
+
+==================== CHAVE NOVA ====================
+  CRAWLER_API_KEYS_SHA256 = $HASH        (secret no GitHub)
+  CRAWLER_API_KEY         = $CHAVE       (gerenciador de senhas; não vai para a AWS)
+
+  Para rodar sem parar nada: deixe CRAWLER_API_KEYS_SHA256 com o hash antigo E o
+  novo, separados por vírgula; faça o deploy; troque quem chama; só então remova
+  o antigo e faça o deploy de novo.
+CHAVEFIM
+else
+  echo
+  echo "Chave de API: mantida. A que já está em CRAWLER_API_KEYS_SHA256 continua valendo."
+  echo "Para gerar outra: $0 --nova-chave"
+fi
 
 cat <<FIM
 
@@ -42,21 +59,9 @@ Secrets:
   AWS_ROLE_ARN            = $ROLE_ARN
   SISCHEF_USUARIO         = (o mesmo usuário do sistema.sischef.com)
   SISCHEF_SENHA           = (a senha dele)
-  CRAWLER_API_KEYS_SHA256 = $HASH
+  CRAWLER_API_KEYS_SHA256 = (só muda se você rodar com --nova-chave)
 Variables:
   REPORTS_BUCKET          = $BUCKET
-
-==================== GUARDE NO GERENCIADOR DE SENHAS (não vai para a AWS) ====================
-  CRAWLER_API_KEY         = $CHAVE
-
-  É com ela que se chama o endpoint:
-    curl -X POST "\$URL" -H "x-api-key: $CHAVE" \\
-         -H 'content-type: application/json' \\
-         -d '{"inicio":"2026-09-01","fim":"2026-09-05"}'
-
-  Rotação sem parar nada: gere a nova, deixe CRAWLER_API_KEYS_SHA256 com os dois
-  hashes separados por vírgula, faça o deploy, troque quem chama, e só então
-  remova o hash antigo.
 
 ECR da imagem: $ECR
   (confira que bate com image_repositories em infra/samconfig.toml)

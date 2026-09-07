@@ -70,6 +70,21 @@ Resources:
       RepositoryName: crawler-sischef
       ImageScanningConfiguration:
         ScanOnPush: true
+      # Sem isto o deploy morre em "Lambda does not have permission to access
+      # the ECR image": o servico Lambda precisa de permissao explicita para
+      # puxar a imagem. Quando o SAM cria o repositorio sozinho ele adiciona
+      # essa policy; como criamos aqui, ela e' nossa responsabilidade.
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: LambdaPullImage
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: [ecr:BatchGetImage, ecr:GetDownloadUrlForLayer]
+            Condition:
+              StringLike:
+                aws:sourceArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:crawler-sischef*
       # Sem isso a conta acumula uma imagem de ~1 GB por deploy — a unica linha
       # do orcamento deste projeto que cresce sozinha.
       LifecyclePolicy:

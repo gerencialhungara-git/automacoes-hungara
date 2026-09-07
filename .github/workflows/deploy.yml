@@ -52,7 +52,9 @@ jobs:
       - name: sam build e deploy
         working-directory: infra
         run: |
-          sam build
+          # O AppVersion vai no build tambem: e' dele que sai a tag da imagem no
+          # ECR (sem isso a tag fica "-dev" e nao diz de qual commit veio).
+          sam build --parameter-overrides AppVersion="${{ github.sha }}"
           sam deploy \
             --no-confirm-changeset --no-fail-on-empty-changeset \
             --parameter-overrides \
