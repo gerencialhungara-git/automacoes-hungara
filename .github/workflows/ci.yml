@@ -33,8 +33,15 @@ jobs:
       - name: Bundle e validacao do SAM
         run: |
           npm run build -w @automacoes/crawler
+          npm run build -w @automacoes/logistica-lambda
           pipx install aws-sam-cli || pip install --quiet aws-sam-cli
-          sam validate --lint --region sa-east-1 --template infra/template.yaml
+          # Uma stack por rotina: todas tem que validar. Um `for` para nao dar para
+          # mover um template de pasta e esquecer de acertar o caminho aqui (foi o
+          # que aconteceu na renomeacao do repositorio).
+          for t in infra/*/template.yaml; do
+            echo "→ $t"
+            sam validate --lint --region sa-east-1 --template "$t"
+          done
 
       - name: Build da imagem (sem push)
         run: docker build -f apps/crawler/Dockerfile -t automacoes-hungara-crawler:ci .

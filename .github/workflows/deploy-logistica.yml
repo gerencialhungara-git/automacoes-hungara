@@ -36,6 +36,20 @@ jobs:
       - run: npm run typecheck
       - run: npm test
 
+      - name: Conferir a configuracao antes de tentar publicar
+        run: |
+          # O sam deploy recusa parametro vazio com "X= is not a valid format", que nao
+          # diz QUAL faltou. Este passo falha antes, nomeando o que precisa ser criado.
+          falta=0
+          checar() {
+            if [ -z "$2" ]; then echo "::error::falta $1 ($3)"; falta=1; fi
+          }
+          checar CRAWLER_URL               "${{ vars.CRAWLER_URL }}"                 "variable: Function URL do crawler"
+          checar CRAWLER_API_KEY           "${{ secrets.CRAWLER_API_KEY }}"          "secret: chave do crawler em texto"
+          checar LOGISTICA_API_KEYS_SHA256 "${{ secrets.LOGISTICA_API_KEYS_SHA256 }}" "secret: hash da chave desta rotina"
+          checar REPORTS_BUCKET            "${{ vars.REPORTS_BUCKET }}"              "variable: bucket de dados"
+          [ "$falta" -eq 0 ] || { echo "Configure em Settings > Secrets and variables > Actions."; exit 1; }
+
       - name: Bundle da Lambda
         run: npm run build -w @automacoes/logistica-lambda
         env:
