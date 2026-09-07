@@ -7,7 +7,7 @@ entrega um artefato pronto, sem ninguém no meio. Rodam como Lambdas na conta da
 | Rotina | O que faz | Estado |
 |---|---|---|
 | **crawler** (`apps/crawler`) | baixa o relatório *Pedidos de venda* do Sischef de um período e devolve JSON + o arquivo original no S3 | no ar |
-| **logistica** (`apps/logistica`) | transforma esse relatório na *Programação de Produção* (matriz Produto × Loja) | em construção |
+| **logistica** (`apps/logistica`) | transforma esse relatório na *Programação de Produção* (matriz Produto × Loja) e devolve o `.xlsx` | no ar |
 
 Candidatas a entrar depois, hoje scripts Python na máquina de alguém: Royalties Mensais e
 o pipeline do Dashboard TV.
@@ -52,8 +52,9 @@ npm run baixar -- --inicio 2026-09-01 --fim 2026-09-05
 
 | Comando | O que faz |
 |---|---|
-| `npm run gravar` | grava o caminho no Sischef (fase 0) |
-| `npm run baixar` | baixa um relatório local, sem AWS (fase 1) |
+| `npm run gravar` | grava o caminho no Sischef |
+| `npm run baixar` | baixa um relatório local, sem AWS |
+| `npm run atualizar-cadastro -w @automacoes/logistica -- <Franquias-Yungas.xlsx>` | regera o cadastro de lojas |
 | `npm run typecheck` | `tsc --noEmit` em todos os workspaces |
 | `npm test` | testes offline (parser e fluxo contra o HAR gravado) |
 

@@ -25,3 +25,25 @@ npm run baixar -- --inicio AAAA-MM-DD --fim AAAA-MM-DD --ver
 
 Falhou? Há um screenshot em `packages/sischef/saida/falha-*.png` mostrando a tela
 exata onde parou. Foi ele que resolveu os dois primeiros bugs deste projeto.
+
+## Logística Diária
+
+A rotina roda como job assíncrono: `POST /` devolve um `jobId` na hora e o trabalho
+acontece numa invocação separada da mesma Lambda. O estado fica em
+`s3://automacoes-hungara-dados-622703417827/logistica/jobs/<jobId>.json` — abrir esse
+JSON é o jeito mais rápido de saber em que etapa parou.
+
+| Sintoma | Causa provável | O que fazer |
+|---|---|---|
+| Job parado em `baixando-relatorio` | o crawler está frio ou o Sischef caiu | veja o runbook do crawler acima; a etapa mais lenta é normal levar ~45 s |
+| `o crawler devolveu 401` | `CRAWLER_API_KEY` na Logística não bate com o hash no crawler | conferir os dois secrets; durante rotação os dois hashes têm de estar em `CRAWLER_API_KEYS_SHA256` |
+| `LAYOUT_MUDOU` ou `LEITURA_SUSPEITA` | o export do Sischef mudou de colunas | ver `01-como-funciona.md`; é o parser do crawler reclamando, não a Logística |
+| `CONFIG_INVALIDA: rótulo` / `SKU` | alguém editou `ordenacao-config.json` e duplicou linha ou SKU | o erro diz qual; corrigir o JSON e fazer deploy |
+| Aviso de órfão numa loja que deveria produzir | falta `ID-PDV-LOJA` ou `Apelido` no Yungas | preencher no Yungas, rodar `npm run atualizar-cadastro` e fazer deploy |
+| Colunas em ordem diferente do esperado | `ordem_lojas` da config está desatualizada | cosmético; atualizar a lista em `ordenacao-config.json` |
+| Planilha com os totais em branco no Excel | `fullCalcOnLoad` não foi escrito | não deveria acontecer — os subtotais são fórmulas sem valor em cache; abrir chamado |
+| Módulo do Hub diz "não está configurado neste ambiente" | faltam `LOGISTICA_URL`/`LOGISTICA_API_KEY` na API do Hub | são opcionais de propósito, para não derrubar o portal; preencher os secrets do `hub-hungara` |
+
+**Reproduzir sem a nuvem** é o caminho mais curto para investigar cálculo: o pacote
+`packages/logistica` roda offline, e `npm test` compara a saída com as planilhas que o
+Python gerou de verdade, célula por célula.
