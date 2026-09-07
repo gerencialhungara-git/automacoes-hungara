@@ -22,8 +22,9 @@ Duas armadilhas que já custaram caro e estão resolvidas no código:
 - **`--no-sandbox` não basta na Lambda.** O processo *zygote* do Chromium tenta criar
   user namespaces, que a Lambda proíbe, e morre com `credentials.cc: Operation not
   permitted` + SEGV — que chega no Playwright disfarçado de `Assertion error`.
-  `--no-zygote` é o que resolve. Funciona no Docker local e falha na Lambda, então
-  é o tipo de coisa que só o deploy revela.
+  `--no-zygote` é o que resolve — e, sem zygote, o renderer também não forka, o que
+  aparece como `Target crashed`: daí `--single-process` junto. Funciona no Docker
+  local e falha na Lambda, então é o tipo de coisa que só o deploy revela.
 - **`Escape` apaga a data.** O campo é um PrimeFaces Calendar (jQuery UI por baixo),
   onde ESC significa *cancelar* e devolve o campo ao valor anterior. Sai-se do campo
   com **Tab**.

@@ -16,6 +16,11 @@ export interface Navegador {
  * de SEGV e de um "Assertion error" no Playwright, que parece erro de código e
  * não é. `--no-zygote` é o que resolve.
  *
+ * E sem o zygote o Chromium não consegue forkar o renderer aqui, o que aparece
+ * como `browserContext.newPage: Target crashed`. Daí `--single-process`, que o
+ * Playwright desaconselha em geral mas é o que faz funcionar na Lambda. Testado
+ * também na máquina local, com download e tudo: 290 linhas nos dois lugares.
+ *
  * Localmente esses argumentos são inofensivos, então usamos os mesmos nos dois
  * lugares — o objetivo do projeto é que o que roda na nuvem seja o que se testa
  * na máquina.
@@ -24,6 +29,7 @@ const ARGS_PADRAO = [
   "--no-sandbox",
   "--disable-setuid-sandbox",
   "--no-zygote",
+  "--single-process",
   "--disable-dev-shm-usage",
   "--disable-gpu",
   "--disable-software-rasterizer",
