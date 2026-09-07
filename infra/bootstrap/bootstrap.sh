@@ -64,5 +64,5 @@ Variables:
   REPORTS_BUCKET          = $BUCKET
 
 ECR da imagem: $ECR
-  (confira que bate com image_repositories em infra/samconfig.toml)
+  (confira que bate com image_repositories em infra/crawler/samconfig.toml)
 FIM
