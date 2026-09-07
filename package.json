@@ -1,5 +1,5 @@
 {
-  "name": "crawler-sischef",
+  "name": "automacoes-hungara",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -11,8 +11,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "gravar": "npm run gravar -w @crawler/sischef --",
-    "baixar": "npm run baixar -w @crawler/sischef --",
+    "gravar": "npm run gravar -w @automacoes/sischef --",
+    "baixar": "npm run baixar -w @automacoes/sischef --",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm test --workspaces --if-present"

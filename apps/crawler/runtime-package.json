@@ -1,5 +1,5 @@
 {
-  "name": "crawler-sischef-runtime",
+  "name": "automacoes-hungara-runtime",
   "private": true,
   "type": "module",
   "comentario": "Dependências que ficam FORA do bundle do esbuild e são instaladas na imagem. A versão do playwright tem que ser a mesma da tag da imagem no Dockerfile — o ci.yml confere.",

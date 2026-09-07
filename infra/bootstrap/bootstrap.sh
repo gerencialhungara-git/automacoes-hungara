@@ -16,13 +16,13 @@ echo "Conta OK: $CONTA (perfil $AWS_PROFILE)"
 
 echo "→ Role de deploy + ECR + buckets + budget"
 aws cloudformation deploy \
-  --stack-name crawler-sischef-bootstrap \
+  --stack-name automacoes-hungara-bootstrap \
   --template-file "$(dirname "$0")/github-oidc.yaml" \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset
 
 saida() {
-  aws cloudformation describe-stacks --stack-name crawler-sischef-bootstrap \
+  aws cloudformation describe-stacks --stack-name automacoes-hungara-bootstrap \
     --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text
 }
 

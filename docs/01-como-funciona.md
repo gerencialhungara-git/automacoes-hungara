@@ -37,7 +37,7 @@ Duas armadilhas que já custaram caro e estão resolvidas no código:
 | `packages/sischef/src/fluxo/` | um passo por arquivo: login, abrir, preencher, baixar |
 | `packages/sischef/src/parsers/` | `.xls` (BIFF) e `.xlsx` → JSON, com validação de layout |
 | `packages/shared/` | contratos zod do pedido e da resposta |
-| `apps/api/` | a Lambda: confere a chave, chama o crawler, sobe no S3, responde |
+| `apps/crawler/` | a Lambda: confere a chave, chama o crawler, sobe no S3, responde |
 
 ## Quando o Sischef mudar a tela
 

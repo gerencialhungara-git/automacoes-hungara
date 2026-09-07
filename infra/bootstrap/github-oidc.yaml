@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >
-  Bootstrap do crawler-sischef (rodar UMA vez com o perfil local `hungara`):
+  Bootstrap do automacoes-hungara (rodar UMA vez com o perfil local `hungara`):
   role que o GitHub Actions assume, repositorio ECR da imagem, bucket dos
   relatorios, bucket de artefatos do SAM e um Budget de alerta de custo.
 
@@ -10,7 +10,7 @@ Parameters:
     Default: gerencialhungara-git
   GitHubRepo:
     Type: String
-    Default: crawler-sischef
+    Default: automacoes-hungara
   GitHubOrgId:
     Type: String
     Default: "272624545"
@@ -26,7 +26,7 @@ Resources:
   SamArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub crawler-sischef-sam-artifacts-${AWS::AccountId}
+      BucketName: !Sub automacoes-hungara-artefatos-${AWS::AccountId}
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -47,7 +47,7 @@ Resources:
   ReportsBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub crawler-sischef-relatorios-${AWS::AccountId}
+      BucketName: !Sub automacoes-hungara-dados-${AWS::AccountId}
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -67,7 +67,7 @@ Resources:
   ImageRepository:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: crawler-sischef
+      RepositoryName: automacoes-hungara-crawler
       ImageScanningConfiguration:
         ScanOnPush: true
       # Sem isto o deploy morre em "Lambda does not have permission to access
@@ -84,7 +84,7 @@ Resources:
             Action: [ecr:BatchGetImage, ecr:GetDownloadUrlForLayer]
             Condition:
               StringLike:
-                aws:sourceArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:crawler-sischef*
+                aws:sourceArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:automacoes-hungara-*
       # Sem isso a conta acumula uma imagem de ~1 GB por deploy — a unica linha
       # do orcamento deste projeto que cresce sozinha.
       LifecyclePolicy:
@@ -101,8 +101,8 @@ Resources:
   DeployRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: crawler-sischef-deploy
-      Description: Assumida pelo GitHub Actions (repo crawler-sischef, branch main) para sam deploy
+      RoleName: automacoes-hungara-deploy
+      Description: Assumida pelo GitHub Actions (repo automacoes-hungara, branch main) para sam deploy
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -125,7 +125,7 @@ Resources:
                   - !Sub repo:${GitHubOrg}@${GitHubOrgId}/${GitHubRepo}@*:ref:refs/heads/main
                   - !Sub repo:${GitHubOrg}@${GitHubOrgId}/${GitHubRepo}@*:environment:producao
       Policies:
-        - PolicyName: sam-deploy-crawler-sischef
+        - PolicyName: sam-deploy-automacoes-hungara
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -133,7 +133,7 @@ Resources:
                 Effect: Allow
                 Action: cloudformation:*
                 Resource:
-                  - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/crawler-sischef/*
+                  - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/automacoes-hungara-*/*
                   - !Sub arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31
               - Sid: CloudFormationLeitura
                 Effect: Allow
@@ -181,13 +181,20 @@ Resources:
                 Action: [iam:CreateRole, iam:DeleteRole, iam:GetRole, iam:PassRole, iam:AttachRolePolicy,
                          iam:DetachRolePolicy, iam:PutRolePolicy, iam:DeleteRolePolicy, iam:GetRolePolicy,
                          iam:TagRole, iam:UntagRole, iam:UpdateAssumeRolePolicy]
-                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/crawler-sischef-*
+                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/automacoes-hungara-*
+
+  # Um topico para TODAS as rotinas. Fica aqui, e nao na stack de cada uma, para
+  # a inscricao de e-mail ser feita uma vez e nao se perder num redeploy.
+  AlertasTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: automacoes-hungara-alertas
 
   CostBudget:
     Type: AWS::Budgets::Budget
     Properties:
       Budget:
-        BudgetName: crawler-sischef
+        BudgetName: automacoes-hungara
         BudgetType: COST
         TimeUnit: MONTHLY
         BudgetLimit:
@@ -204,6 +211,12 @@ Resources:
               Address: !Ref AlertEmail
 
 Outputs:
+  AlertasTopicArn:
+    Description: Inscreva um e-mail neste topico para receber os alarmes de todas as rotinas
+    Value: !Ref AlertasTopic
+    Export:
+      Name: automacoes-hungara-alertas-arn
+
   DeployRoleArn:
     Description: Cole em Settings > Secrets > Actions como AWS_ROLE_ARN
     Value: !GetAtt DeployRole.Arn

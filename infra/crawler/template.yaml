@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: crawler-sischef - Lambda que baixa o relatorio Pedidos de venda do Sischef
+Description: automacoes-hungara - Lambda que baixa o relatorio Pedidos de venda do Sischef
 
 Parameters:
   SischefUsuario:
@@ -24,7 +24,7 @@ Resources:
   CrawlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: crawler-sischef
+      FunctionName: automacoes-hungara-crawler
       Description: Faz login no Sischef, baixa Pedidos de venda do periodo e devolve JSON + arquivo no S3
       PackageType: Image
       # x86_64 de proposito (o Hub e' arm64): os runners do GitHub sao amd64, e
@@ -56,20 +56,21 @@ Resources:
       LoggingConfig:
         LogGroup: !Ref CrawlerLogGroup
     Metadata:
-      DockerContext: ../
-      Dockerfile: apps/api/Dockerfile
+      # A raiz do monorepo: o Dockerfile copia apps/crawler/dist.
+      DockerContext: ../../
+      Dockerfile: apps/crawler/Dockerfile
       DockerTag: !Ref AppVersion
 
   CrawlerLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /aws/lambda/crawler-sischef
+      LogGroupName: /aws/lambda/automacoes-hungara-crawler
       RetentionInDays: 14
 
   ErrosAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: crawler-sischef-errors
+      AlarmName: automacoes-hungara-crawler-errors
       AlarmDescription: O crawler do Sischef falhou - normalmente e' seletor quebrado ou login recusado
       Namespace: AWS/Lambda
       MetricName: Errors
@@ -82,17 +83,11 @@ Resources:
       Threshold: 1
       ComparisonOperator: GreaterThanOrEqualToThreshold
       TreatMissingData: notBreaching
-      AlarmActions: [!Ref AlertasTopic]
-
-  AlertasTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      TopicName: crawler-sischef-alertas
+      # O topico vive no bootstrap: um so para todas as rotinas, com a inscricao
+      # de e-mail feita uma vez, que sobrevive a qualquer redeploy.
+      AlarmActions: [!ImportValue automacoes-hungara-alertas-arn]
 
 Outputs:
   FunctionUrl:
     Description: Endpoint do crawler (POST com header x-api-key)
     Value: !GetAtt CrawlerFunctionUrl.FunctionUrl
-  AlertasTopicArn:
-    Description: Inscreva um e-mail neste topico para receber os alarmes
-    Value: !Ref AlertasTopic

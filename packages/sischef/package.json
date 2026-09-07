@@ -1,5 +1,5 @@
 {
-  "name": "@crawler/sischef",
+  "name": "@automacoes/sischef",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@crawler/shared": "*",
+    "@automacoes/shared": "*",
     "@e965/xlsx": "^0.20.3",
     "playwright": "1.63.0"
   },

@@ -1,0 +1,13 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "automacoes-hungara-crawler"
+region = "sa-east-1"
+
+[default.deploy.parameters]
+s3_bucket = "automacoes-hungara-artefatos-622703417827"
+s3_prefix = "crawler"
+image_repositories = ["CrawlerFunction=622703417827.dkr.ecr.sa-east-1.amazonaws.com/automacoes-hungara-crawler"]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+fail_on_empty_changeset = false

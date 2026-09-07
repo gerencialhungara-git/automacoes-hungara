@@ -1,5 +1,5 @@
 // Sobe a API local, para testar o contrato sem AWS:
-//   npm run dev -w @crawler/api
+//   npm run dev -w @automacoes/crawler
 import { serve } from "@hono/node-server";
 import { criarApp } from "./app.js";
 

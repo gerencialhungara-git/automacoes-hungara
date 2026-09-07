@@ -6,8 +6,8 @@
 |---|---|
 | Conta AWS | `622703417827` (Hungara) — perfil local `hungara`, **nunca** o `default` |
 | Região | `sa-east-1` |
-| GitHub | org `gerencialhungara-git`, repo `crawler-sischef` |
-| Stacks | `crawler-sischef-bootstrap` (uma vez) e `crawler-sischef` (o SAM) |
+| GitHub | org `gerencialhungara-git`, repo `automacoes-hungara` |
+| Stacks | `automacoes-hungara-bootstrap` (uma vez) + uma por rotina: `automacoes-hungara-crawler`, `automacoes-hungara-logistica` |
 
 ## Bootstrap (roda uma vez)
 
@@ -15,9 +15,18 @@
 AWS_PROFILE=hungara ./infra/bootstrap/bootstrap.sh
 ```
 
-Cria a role de deploy (OIDC), o repositório ECR, o bucket dos relatórios, o bucket de
-artefatos do SAM e o budget. Ao final imprime o que colar no GitHub e a chave de API
-para guardar no gerenciador de senhas.
+Cria a role de deploy (OIDC), o repositório ECR, o bucket de dados, o bucket de artefatos
+do SAM, o budget e o **tópico SNS de alertas** — um só para todas as rotinas, para a
+inscrição de e-mail ser feita uma vez e sobreviver a qualquer redeploy:
+
+```bash
+AWS_PROFILE=hungara aws sns subscribe --region sa-east-1 \
+  --topic-arn arn:aws:sns:sa-east-1:622703417827:automacoes-hungara-alertas \
+  --protocol email --notification-endpoint gerencial.hungara@gmail.com
+```
+
+Ao final o script imprime o que colar no GitHub. A chave de API só é gerada com
+`--nova-chave`; sem a flag ele avisa que a atual continua valendo.
 
 > O provedor OIDC do GitHub **já existe** nesta conta — foi criado pelo bootstrap do
 > `hub-hungara`. Uma conta só pode ter um por URL, então este template aponta para o
@@ -40,11 +49,15 @@ retaguarda da rede); migrar para SSM `SecureString` é ~10 linhas e vale fazer.
 
 ## Pipeline
 
-`ci.yml` em todo PR: typecheck, testes, conferência de que a versão do Playwright
-bate nos três lugares, `sam validate` e `docker build` sem push.
+`ci.yml` em todo PR: typecheck, testes, conferência de que a versão do Playwright bate nos
+três lugares, `sam validate` e `docker build` sem push.
 
-`deploy.yml` no `main`: assume a role por OIDC, faz login no ECR, `sam build` (que
-constrói e sobe a imagem) e `sam deploy`, terminando com um `curl` no `/health`.
+**Um workflow de deploy por rotina**, com filtro de path — `deploy-crawler.yml` só dispara
+quando `apps/crawler`, `packages/sischef`, `packages/shared` ou `infra/crawler` mudam. É o
+que evita reconstruir a imagem de 3,7 GB do Chromium para editar um JSON da Logística.
+
+Cada um assume a role por OIDC, faz `sam build` e `sam deploy` na sua stack, e termina com
+um `curl` no `/health`.
 
 ## Rotação da chave de API
 

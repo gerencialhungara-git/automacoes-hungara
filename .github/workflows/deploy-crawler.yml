@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy do crawler
 
 # Sem chave de acesso AWS no GitHub: o job assume uma role via OIDC
 # (infra/bootstrap/github-oidc.yaml).
@@ -6,10 +6,11 @@ on:
   push:
     branches: [main]
     paths:
-      - "apps/**"
-      - "packages/**"
-      - "infra/**"
-      - ".github/workflows/deploy.yml"
+      - "apps/crawler/**"
+      - "packages/sischef/**"
+      - "packages/shared/**"
+      - "infra/crawler/**"
+      - ".github/workflows/deploy-crawler.yml"
   workflow_dispatch:
 
 permissions:
@@ -17,12 +18,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy
+  group: deploy-crawler
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Publicar a Lambda
+    name: Publicar a Lambda do crawler
     runs-on: ubuntu-latest
     environment: producao
     steps:
@@ -35,7 +36,7 @@ jobs:
       - run: npm run typecheck
 
       - name: Bundle da Lambda
-        run: npm run build -w @crawler/api
+        run: npm run build -w @automacoes/crawler
         env:
           APP_VERSION: ${{ github.sha }}
 
@@ -50,7 +51,7 @@ jobs:
           use-installer: true
 
       - name: sam build e deploy
-        working-directory: infra
+        working-directory: infra/crawler
         run: |
           # O AppVersion vai no build tambem: e' dele que sai a tag da imagem no
           # ECR (sem isso a tag fica "-dev" e nao diz de qual commit veio).
@@ -66,7 +67,7 @@ jobs:
 
       - name: Smoke test
         run: |
-          URL=$(aws cloudformation describe-stacks --stack-name crawler-sischef --region sa-east-1 \
+          URL=$(aws cloudformation describe-stacks --stack-name automacoes-hungara-crawler --region sa-east-1 \
                 --query "Stacks[0].Outputs[?OutputKey=='FunctionUrl'].OutputValue" --output text)
           echo "Endpoint: $URL"
           curl --fail --silent --show-error "${URL}health"

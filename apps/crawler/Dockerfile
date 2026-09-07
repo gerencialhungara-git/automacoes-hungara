@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # que removeu o `distutils`, e o node-gyp que compila o aws-lambda-ric ainda
 # importa esse modulo. Sem ele o build morre em "No module named 'distutils'".
 WORKDIR /deps
-COPY apps/api/runtime-package.json ./package.json
+COPY apps/crawler/runtime-package.json ./package.json
 # O browser já está na imagem; baixar de novo seria 500 MB à toa.
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 RUN npm install --no-audit --no-fund --omit=dev
@@ -37,8 +37,8 @@ ENV NODE_ENV=production \
 WORKDIR /var/task
 COPY --from=deps /deps/node_modules ./node_modules
 COPY --from=deps /deps/package.json ./package.json
-# dist/ é o bundle do esbuild (apps/api/scripts/build.mjs), gerado antes do build.
-COPY apps/api/dist/ ./
+# dist/ é o bundle do esbuild (apps/crawler/scripts/build.mjs), gerado antes do build.
+COPY apps/crawler/dist/ ./
 
 ENTRYPOINT ["/var/task/node_modules/.bin/aws-lambda-ric"]
 CMD ["index.handler"]

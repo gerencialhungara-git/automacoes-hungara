@@ -1,7 +1,7 @@
 # Runbook
 
-O alarme `crawler-sischef-errors` avisa no tópico SNS `crawler-sischef-alertas`.
-Os logs ficam em `/aws/lambda/crawler-sischef`; cada etapa é uma linha
+O alarme `automacoes-hungara-crawler-errors` avisa no tópico SNS `automacoes-hungara-alertas`.
+Os logs ficam em `/aws/lambda/automacoes-hungara-crawler`; cada etapa é uma linha
 (`{"etapa":"login",...}`), então o log diz em que passo parou.
 
 | Sintoma | Causa provável | O que fazer |

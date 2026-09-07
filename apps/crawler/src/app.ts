@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { PedidoRelatorio } from "@crawler/shared";
-import { baixarRelatorio } from "@crawler/sischef";
+import { PedidoRelatorio } from "@automacoes/shared";
+import { baixarRelatorio } from "@automacoes/sischef";
 import { chaveValida } from "./auth.js";
 import { env } from "./env.js";
 import { guardar, urlTemporaria, validadeUrlSegundos } from "./s3.js";

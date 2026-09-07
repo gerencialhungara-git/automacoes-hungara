@@ -23,8 +23,8 @@ jobs:
       # o mesmo que gravou o fluxo — e a falha aparece só em producao.
       - name: Versao do Playwright bate com a tag da imagem
         run: |
-          LIB=$(node -p "require('./apps/api/runtime-package.json').dependencies.playwright")
-          IMG=$(sed -n 's|^FROM mcr.microsoft.com/playwright:v\([0-9.]*\)-.*|\1|p' apps/api/Dockerfile | head -1)
+          LIB=$(node -p "require('./apps/crawler/runtime-package.json').dependencies.playwright")
+          IMG=$(sed -n 's|^FROM mcr.microsoft.com/playwright:v\([0-9.]*\)-.*|\1|p' apps/crawler/Dockerfile | head -1)
           echo "runtime-package.json=$LIB  Dockerfile=$IMG"
           [ "$LIB" = "$IMG" ] || { echo "Divergiram. Acerte os dois."; exit 1; }
           PKG=$(node -p "require('./packages/sischef/package.json').dependencies.playwright")
@@ -32,9 +32,9 @@ jobs:
 
       - name: Bundle e validacao do SAM
         run: |
-          npm run build -w @crawler/api
+          npm run build -w @automacoes/crawler
           pipx install aws-sam-cli || pip install --quiet aws-sam-cli
           sam validate --lint --region sa-east-1 --template infra/template.yaml
 
       - name: Build da imagem (sem push)
-        run: docker build -f apps/api/Dockerfile -t crawler-sischef:ci .
+        run: docker build -f apps/crawler/Dockerfile -t automacoes-hungara-crawler:ci .

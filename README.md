@@ -1,21 +1,24 @@
-# crawler-sischef
+# automacoes-hungara
 
-Baixa o relatório **Pedidos de venda** do Sischef sozinho, para a rotina diária de
-Logística. Recebe uma data de início e uma de fim, faz o login, percorre a plataforma,
-baixa o arquivo e devolve os dados em JSON mais o arquivo original no S3.
+Rotinas automatizadas da Húngara: cada uma pega dado de um sistema de fornecedor e
+entrega um artefato pronto, sem ninguém no meio. Rodam como Lambdas na conta da Hungara
+(`622703417827`, `sa-east-1`), atrás de endpoints HTTP autenticados.
 
-Roda como uma Lambda na conta da Hungara (`622703417827`, `sa-east-1`), atrás de um
-endpoint HTTP autenticado, para outros sistemas poderem chamar.
+| Rotina | O que faz | Estado |
+|---|---|---|
+| **crawler** (`apps/crawler`) | baixa o relatório *Pedidos de venda* do Sischef de um período e devolve JSON + o arquivo original no S3 | no ar |
+| **logistica** (`apps/logistica`) | transforma esse relatório na *Programação de Produção* (matriz Produto × Loja) | em construção |
 
-> **Por que existe um navegador dentro de uma Lambda.** Porque o Sischef não publica
-> API. O pedido formal está em `../MCPs/sischef/CHECKLIST-DESCOBERTA.md`, sem resposta
-> desde agosto de 2026. Se um dia a API sair, este projeto encolhe para um `fetch` —
-> ver "degradação" abaixo. Isto aqui é um contorno, não o destino.
+Candidatas a entrar depois, hoje scripts Python na máquina de alguém: Royalties Mensais e
+o pipeline do Dashboard TV.
 
-## Estado
-
-Roda ponta a ponta **localmente**, validado em 06/09/2026 (1607 linhas em 5 dias).
-Falta publicar na AWS: ver [docs/02-infra-e-deploy.md](docs/02-infra-e-deploy.md).
+> **Por que existe um navegador dentro de uma Lambda.** Porque o Sischef não publica API.
+> O pedido formal está em `../MCPs/sischef/CHECKLIST-DESCOBERTA.md`, sem resposta desde
+> agosto de 2026. Se um dia a API sair, o crawler encolhe para um `fetch` — ver
+> "degradação" abaixo. Isto é um contorno, não o destino.
+>
+> O nome do repositório e o nome dos recursos na AWS são o mesmo (`automacoes-hungara-*`).
+> Uma stack por rotina: `automacoes-hungara-crawler`, `automacoes-hungara-logistica`.
 
 ## Rodar local em 5 minutos
 
@@ -57,12 +60,18 @@ npm run baixar -- --inicio 2026-09-01 --fim 2026-09-05
 ## Estrutura
 
 ```
-packages/shared    contratos zod do pedido e da resposta
-packages/sischef   o crawler: seletores, fluxo, parsers, gravador e CLI
-apps/api           a Lambda: confere a chave, chama o crawler, sobe no S3
-infra              bootstrap CloudFormation + template do SAM
-docs               como funciona, infra, runbook e ADRs
+packages/shared     contratos zod compartilhados
+packages/sischef    o crawler: seletores, fluxo, parsers, gravador e CLI
+packages/logistica  o porte determinístico da Programação de Produção
+apps/crawler        Lambda de imagem (Chromium): confere a chave, roda o crawler, sobe no S3
+apps/logistica      Lambda zip: orquestra crawler + processamento e gera a planilha
+infra/bootstrap     buckets, ECR, role de deploy, budget e o tópico de alertas
+infra/<rotina>      template.yaml + samconfig.toml, uma stack por rotina
+docs                como funciona, infra, runbook e ADRs
 ```
+
+Cada rotina tem seu próprio workflow com filtro de path: mexer na Logística **não**
+reconstrói a imagem de 3,7 GB do Chromium.
 
 ## O endpoint
 
