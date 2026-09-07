@@ -14,6 +14,7 @@ Os logs ficam em `/aws/lambda/crawler-sischef`; cada etapa é uma linha
 | `LEITURA_SUSPEITA` | coluna existe mas veio vazia — conversão de tipo quebrou | é o caso dos IDs do `.xls`; veja o teste de regressão em `test/parser.test.ts` |
 | `RELATORIO_VAZIO` | não houve pedido no período | confira o intervalo antes de suspeitar do crawler |
 | 401 na chamada | chave errada ou rotação pela metade | confira `CRAWLER_API_KEYS_SHA256`; durante a rotação os dois hashes precisam estar lá |
+| `Assertion error` do playwright-core, ~15 s | o Chromium morreu ao subir; veja o log com `DEBUG=pw:browser*` | quase sempre é flag faltando na Lambda — dá para testar sem redeploy pondo `CHROMIUM_ARGS` na configuração da função |
 | Timeout da Lambda (10 min) | Sischef muito lento ou travou numa tela | veja o log para a última etapa; rode local com `--ver` no mesmo período |
 
 **Reproduzir na sua máquina** é quase sempre o caminho mais rápido:
